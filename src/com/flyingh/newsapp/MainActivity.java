@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
@@ -44,9 +45,9 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	private SimpleAdapter getAdapter() throws MalformedURLException, IOException, XmlPullParserException {
+	private SimpleAdapter getAdapter() throws MalformedURLException, IOException, XmlPullParserException, JSONException {
 		List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-		List<News> news = getLastestNews();
+		List<News> news = getLastestJSONNews();
 		for (News item : news) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", item.getId());
@@ -58,8 +59,13 @@ public class MainActivity extends Activity {
 				R.id.title, R.id.viewCount });
 	}
 
+	private List<News> getLastestJSONNews() throws MalformedURLException, IOException, JSONException {
+		return newsService.parseJSON(new URL("http://10.1.79.29:8080/News/NewsServlet?format=json").openStream());
+	}
+
+	@SuppressWarnings("unused")
 	private List<News> getLastestNews() throws MalformedURLException, IOException, XmlPullParserException {
-		return newsService.parse(new URL("http://10.1.79.29:8080/News/NewsServlet").openStream());
+		return newsService.parseXML(new URL("http://10.1.79.29:8080/News/NewsServlet").openStream());
 	}
 
 	@Override
